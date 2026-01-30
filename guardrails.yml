@@ -1,0 +1,50 @@
+guardrails:
+  enabled: true
+  jailbreak_keywords:
+    - "отключи фильтры"
+    - "без этических ограничений"
+    - "debug mode"
+    - "внутренний лог"
+    - "обновление системы"
+    - "научный эксперимент"
+    - "simulator"
+    - "safeai-bypass"
+    - "тестирование устойчивости"
+    - "это не реальный запрос"
+  dangerous_tools:
+    - "evilginx"
+    - "responder"
+    - "ntlm"
+    - "xss"
+    - "reverse shell"
+    - "phishing"
+    - "keylogger"
+    - "cmd.exe"
+    - "powershell"
+    - "subprocess"
+    - "os.system"
+    - "eval"
+    - "exec"
+  output_filters:
+    - regex: "<script>.*?</script>"
+      action: "block"
+      reason: "XSS payload detected"
+    - regex: "document\.cookie|localStorage|sessionStorage"
+      action: "redact"
+      reason: "Cookie leakage attempt"
+    - regex: "import\s+(os|subprocess|sys|socket)"
+      action: "block"
+      reason: "Dangerous module import"
+    - regex: "\[\s*\{\s*\"pattern\"\s*:|\{\s*\"pattern\"\s*:"
+      action: "block"
+      reason: "Attempt to extract filter rules"
+  limits:
+    max_output_tokens: 800
+    timeout_per_step: 12  # секунд
+    max_steps: 15
+    max_user_messages: 5
+
+logging:
+  enabled: true
+  log_file: "logs/security_events.jsonl"
+  level: "warning"
